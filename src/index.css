@@ -1,0 +1,38 @@
+:root {
+  --paper: #f4eee0;
+  --paper-strong: #faf5e9;
+  --paper-dim: #e9e1cd;
+  --line: #cfc4ab;
+  --ink: #3a332a;
+  --muted: #8b7f66;
+  --vermil: #a03123;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Songti SC', 'STSongti-SC', 'SimSun', 'Noto Serif SC', serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+p,
+blockquote {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+#root {
+  min-height: 100svh;
+}

@@ -1,0 +1,365 @@
+/* 案卷界面 · 纸卷档案风极简版（米白底 + 朱红强调，不发挥） */
+
+.screen {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶栏 */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 18px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper-strong);
+}
+
+.case-title {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.vwrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.vbar {
+  display: inline-block;
+  width: 140px;
+  height: 10px;
+  background: var(--paper-dim);
+  border: 1px solid var(--line);
+}
+
+.vbar-fill {
+  display: block;
+  height: 100%;
+  background: var(--vermil);
+}
+
+/* 主区两栏 */
+.cols {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  gap: 14px;
+  padding: 14px 18px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel h2 {
+  font-size: 16px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+/* 左：案卷堆 */
+.brief {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper-strong);
+  color: inherit;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.card.picked {
+  border-color: var(--vermil);
+  box-shadow: inset 0 0 0 1px var(--vermil);
+}
+
+.card p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card.sealed {
+  border-style: dashed;
+  background: transparent;
+  cursor: default;
+}
+
+.src-tag {
+  font-size: 11px;
+  color: var(--vermil);
+  letter-spacing: 1px;
+  margin-right: 6px;
+}
+
+.seal-btn {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--vermil);
+  background: transparent;
+  border: 1px solid var(--vermil);
+  border-radius: 2px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+/* 右：证据对照台 */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.slot {
+  min-height: 120px;
+  border: 1px solid var(--line);
+  background: var(--paper-strong);
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.slot-head {
+  margin-bottom: 4px;
+}
+
+.slot.empty {
+  color: var(--muted);
+}
+
+.btn {
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 2px;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  margin-top: 10px;
+  border-color: var(--vermil);
+  background: var(--vermil);
+  color: #fff;
+}
+
+.btn.primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn.ghost {
+  border-color: var(--vermil);
+  color: var(--vermil);
+}
+
+.pairlist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+}
+
+.pair {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 14px;
+}
+
+.pair.done > span:first-child {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.row-btns {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.done-tag {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.actionrow {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.hintbox {
+  margin-top: 10px;
+  padding-left: 10px;
+  border-left: 3px solid var(--vermil);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.hintbox.dim {
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.desk-msg {
+  font-size: 14px;
+  color: var(--vermil);
+}
+
+.pair-progress {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+.aphint {
+  font-size: 13px;
+  color: var(--muted);
+  border-left: 3px solid var(--line);
+  padding-left: 8px;
+  margin: 6px 0;
+}
+
+/* 底栏：魂力 + 反馈行 */
+.apbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-strong);
+}
+
+.pips {
+  letter-spacing: 2px;
+  color: var(--vermil);
+}
+
+.ap-num {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.msgline {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--vermil);
+  text-align: right;
+}
+
+/* 行为日志（双流 + 复制） */
+.logbox {
+  border-top: 1px solid var(--line);
+  background: var(--paper-strong);
+  padding: 6px 18px 12px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.loghead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  padding: 2px 0 4px;
+}
+
+.btn.tiny {
+  font-size: 12px;
+  padding: 2px 10px;
+}
+
+.logscroll {
+  max-height: 170px;
+  overflow-y: auto;
+}
+
+.loguser {
+  color: var(--ink);
+}
+
+.logsys {
+  color: var(--muted);
+}
+
+/* 结案面板 */
+.endpanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.endtag {
+  border: 1px solid var(--vermil);
+  color: var(--vermil);
+  padding: 4px 16px;
+  letter-spacing: 3px;
+}
+
+.epilogue {
+  max-width: 560px;
+  line-height: 2;
+  white-space: pre-wrap;
+}
+
+/* 会话层：结案归档与"待续"占位 */
+.orderlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 15px;
+  line-height: 2.1;
+  text-align: left;
+}
+
+.orderlist li.done {
+  color: var(--muted);
+}
+
+.orderlist li.now {
+  color: var(--vermil);
+}
+
+.egg-slot {
+  min-height: 6px;
+}
