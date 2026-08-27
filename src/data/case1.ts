@@ -13,7 +13,7 @@ export const CASE1: CaseData = {
     '阮大椿的死亡记录改回了"旧疾暴亡，免于渎职追责"。他家属的抚恤按新记录重算了。\n' +
     '结案归档时，系统在卷尾盖了个章——"积压件，已清理"。\n' +
     '章印是热的。', // 待人工终审
-  ap: 12,
+  ap: 20, // 2026-08-27 盲测补对：3个必处置对（改判9+魄读口述一/二8=17）——原12连原2对都走不完（起草bug），提到20
   days: 7,
   actionsPerDay: 4,
   statements: [
@@ -65,6 +65,11 @@ export const CASE1: CaseData = {
     { id: 'p_voyage', a: 'doc_waybill', b: 'po_ruan1', kind: 'memory_bias', resolver: 'po_ruan2' },
     // 驳回教学位：事实更新（修船单事发后属正常，不构成冤情——教玩家识别"不是所有差异都是矛盾"）
     { id: 'p_repair', a: 'doc_repair', b: 'grey_cargo', kind: 'fact_update' },
+    // ---- 2026-08-27 盲测补对（用户授权） ----
+    // 存根×口述二："失足坠河"vs"夜里从不站立/坐船头"（盲测 1/1 命中·高确定度）——佐证路线也立案
+    { id: 'p_stance', a: 'doc_waybill', b: 'po_ruan2', kind: 'system_tamper' },
+    // 存根×残票："沉没大半"vs"验讫无损"（盲测 1/1 命中·中确定度）——残票是过闸时点，坠河在其后，吸收为时间错位陷阱
+    { id: 'p_cargo', a: 'doc_waybill', b: 'grey_cargo', kind: 'fact_update' },
   ],
   hints: [
     { trigger: 'start', text: '先对明处的两份：押运清单和夜值簿。一个说"坠河"，一个说"无事故"——这种硬碰硬的差异，先钉死它。' }, // 待人工终审

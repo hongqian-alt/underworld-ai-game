@@ -34,7 +34,7 @@ export const PROLOGUE: CaseData = {
       id: 'po_shen2',
       source: 'poread',
       label: '沈砚口述·二',
-      text: '"六月里我一直在河堤上当差，工头日日点名。初三那夜我没出门——灯芯都数过的，一夜三根，一根不多。"\n（他说到"灯芯"时，魂焰稳了一下。这不是编的。）',
+      text: '"六月里我一直在河堤上当差，工头日日点名。七月初三那夜我没出门——灯芯都数过的，一夜三根，一根不多。"\n（他说到"灯芯"时，魂焰稳了一下。这不是编的。）', // 待人工终审（2026-08-27 盲测补对时加"七月"消歧：原"初三"有六/七月歧义）
       hidden: true,
     },
     {
@@ -63,13 +63,22 @@ export const PROLOGUE: CaseData = {
     { id: 'p_date', a: 'doc_judgment', b: 'grey_tombstone', kind: 'system_tamper' },
     { id: 'p_water', a: 'doc_judgment', b: 'po_shen1', kind: 'memory_bias', resolver: 'po_shen2' },
     { id: 'p_old', a: 'po_shen3', b: 'grey_tombstone', kind: 'fact_update' },
+    // ---- 2026-08-27 盲测补对（用户授权）：吸收"逻辑成立但引擎无对"的假阴性空间 ----
+    // 判文×水志：名册无沈砚=佐证冤情（盲测 2/2 命中·中高确定度）；同时让崔钰提示#3成真
+    { id: 'p_roster', a: 'doc_judgment', b: 'grey_ledger', kind: 'system_tamper' },
+    // 判文×口述二："初三夜没出门"直接反驳溺亡判定（盲测 1/2 命中·高确定度）；补链=水志钉住溺者名单
+    { id: 'p_night', a: 'doc_judgment', b: 'po_shen2', kind: 'memory_bias', resolver: 'grey_ledger' },
+    // 口述一×口述三：同源自述前后不一（"这辈子没下过水"vs"十岁掉过河"）——最响假信号（盲测 2/2），吸收为时间错位陷阱
+    { id: 'p_self', a: 'po_shen1', b: 'po_shen3', kind: 'fact_update' },
+    // 口述二×坟砖：真实玩家两轮踩中的原卡点——"初三夜"实为执念错构（他六月初九已故），吸收为陷阱
+    { id: 'p_shen2_tomb', a: 'po_shen2', b: 'grey_tombstone', kind: 'fact_update' },
   ],
   hints: [
     { trigger: 'start', text: '先看摆在明处的两份东西。判文的日期，和坟砖的日期，对得上吗？' },
     { trigger: 'found1', text: '口述会撒谎吗？不会。但记忆会被执念泡过——他说不记得水，你要找的是能钉住他那晚行踪的东西，不是他怕水不怕。' },
     { trigger: 'found2', text: '日期对上了，人却对不上。去翻当夜的水志名册。还有——别把十年前的旧事当成今夜的冤情，系统在看。' },
   ],
-  ap: 12,
+  ap: 20, // 2026-08-27 盲测补对：4个必处置对（改判12+魄读4+勘验2=18）→12不够，提到20（含2点崔钰余量）
   days: 7,
   actionsPerDay: 4,
 }

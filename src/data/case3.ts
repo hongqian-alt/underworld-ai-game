@@ -35,7 +35,7 @@ export const CASE3: CaseData = {
     '竹简上的手迹验明是秦孺人的。张氏的"自家遗物"改判为误收，竹简归还其女。\n' +
     '结案时那女孩没哭，只是把箱子抱得很紧。\n' +
     '你注意到本案的卷宗编号被系统重排过——排在了它不该在的位置。像是有人不想让你翻到它。', // 待人工终审（结尾一句是暗线钩子，终审时可调整力度）
-  ap: 12,
+  ap: 22, // 2026-08-27 盲测补对（三轮收敛后）：4个必处置对（改判12+魄读张氏4+调卷遗物2+勘验底簿2=20）→提到22
   days: 7,
   actionsPerDay: 4,
   statements: [
@@ -68,7 +68,7 @@ export const CASE3: CaseData = {
       id: 'grey_count',
       source: 'greytrace',
       label: '书肆进账底簿',
-      text: '书肆底簿："八月廿四，收竹简四十七卷，付张氏钱二百文。"卷数与秦孺人口述吻合——四十七卷。', // 待人工终审
+      text: '书肆底簿："八月廿四，收竹简四十七卷（张氏废纸转售），付张氏钱二百文。"卷数与秦孺人口述吻合——四十七卷。', // 待人工终审（2026-08-27 盲测补对：加"废纸转售"消歧——盲测把三十文收/二百文售误读为同一笔交易）
       hidden: true,
     },
     {
@@ -82,8 +82,21 @@ export const CASE3: CaseData = {
   pairs: [
     // 真矛盾①：系统篡改（竹简归属错误登记——张氏收据 vs 残印验手迹）
     { id: 'p_slips', a: 'doc_claim', b: 'grey_seal', kind: 'system_tamper' },
-    // 真矛盾②：记忆偏差（张氏口述"分不出/自家物" vs 遗物清单二十三卷——需遗物清单补链；张氏不是撒谎，是认知偏差）
-    { id: 'p_owner', a: 'po_zhang', b: 'grey_count', kind: 'memory_bias', resolver: 'doc_zhang_husband' },
+    // 真矛盾②：记忆偏差。2026-08-27 盲测补对第二轮：原配"张氏口述×底簿"两轮无人走，
+    // 读者自然路由是"张氏口述×遗物清单"（她称自家物 vs 清单只有二十三卷）——按读者路由重排，补链=底簿钉住实售卷数
+    { id: 'p_owner', a: 'po_zhang', b: 'doc_zhang_husband', kind: 'memory_bias', resolver: 'grey_count' },
+    // 真矛盾③：张氏"分不出/自家物"的主张 × 残印物证（盲测 2/2 提交·高确定度）——补链=遗物清单证明张家卷数对不上
+    { id: 'p_claim', a: 'po_zhang', b: 'grey_seal', kind: 'memory_bias', resolver: 'doc_zhang_husband' },
+    // 真矛盾④：两造对峙（秦孺人"我的手抄" vs 张氏"我男人攒的"——盲测三轮 3/3 提交且置信度递升）——补链=残印物证钉住归属
+    { id: 'p_versus', a: 'po_qin1', b: 'po_zhang', kind: 'memory_bias', resolver: 'grey_seal' },
+    // ---- 2026-08-27 盲测补对 ----
+    // 口述一×遗物清单："四十七卷"vs"二十三卷"（盲测 1/1 提交·高）——两边都对：说的是两箱不同的竹简，吸收为陷阱
+    { id: 'p_count', a: 'po_qin1', b: 'doc_zhang_husband', kind: 'fact_update' },
+    // 底簿×遗物清单："四十七卷"vs"二十三卷"文对文（盲测 2/4 提交·高）——同上：底簿记她卖的箱，清单记张家的箱，两箱不同，吸收为陷阱
+    { id: 'p_count2', a: 'grey_count', b: 'doc_zhang_husband', kind: 'fact_update' },
+    // 收据×底簿："三十文"vs"二百文"（盲测 1/1 提交·高，误读为同一笔交易）——收购与转售两笔各自成立，吸收为陷阱
+    // （第二轮消歧后已降至 B·低不提交——文本修复生效，陷阱保留兜底）
+    { id: 'p_price', a: 'doc_claim', b: 'grey_count', kind: 'fact_update' },
   ],
   hints: [
     { trigger: 'start', text: '先验物：竹简上的印，跟收据上的手，是同一双手吗？物证钉死的事，口述就动摇不了。' }, // 待人工终审

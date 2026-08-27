@@ -15,15 +15,22 @@ export const CASE2: CaseData = {
     '布商陈六与脚夫陈六的记录终于分开，各自归位。\n' +
     '你合上卷宗时发现，系统给两条记录编了同一串辅号——大概是对"同名"这种事偷了懒。\n' +
     '它偷懒的每一步，都得有人替它擦。', // 待人工终审
-  ap: 12,
+  ap: 16, // 2026-08-27 盲测补对：2个必处置对（改判6+调卷复勾2+魄读口述一4+调卷流水2=14）→12不够，提到16
   days: 7,
   actionsPerDay: 4,
   statements: [
     {
       id: 'doc_register',
       source: 'document',
-      label: '生死簿勾录页',
-      text: '生死簿载："陈六，殁于七月十二，布商。"墨迹工整。但页脚有一行小字批注：七月十九复勾"陈六"——脚夫。两条勾录叠在同一个名字上。', // 待人工终审
+      label: '生死簿勾录·正文',
+      text: '生死簿载："陈六，殁于七月十二，布商。"墨迹工整。', // 待人工终审（2026-08-27 盲测补对：原单条含页脚批注，拆成两条让"叠勾"错误可配对）
+    },
+    {
+      id: 'doc_register2',
+      source: 'document',
+      label: '生死簿页脚复勾',
+      text: '同页页脚小字批注："七月十九复勾\'陈六\'——脚夫。"纸色与正文同页，两条勾录叠在同一个名字上。', // 待人工终审
+      hidden: true,
     },
     {
       id: 'grey_tomb2',
@@ -61,13 +68,19 @@ export const CASE2: CaseData = {
     },
   ],
   pairs: [
-    // 真矛盾①：系统篡改（生死簿两条勾录同串辅号 = 薄错）
-    { id: 'p_book', a: 'doc_register', b: 'grey_tomb2', kind: 'system_tamper' },
-    // 真矛盾②：记忆偏差（脚夫口述一日期漂移，需县志/流水补链）
+    // 真矛盾①：系统篡改（同一页两条勾录叠名=簿错本体。2026-08-27 盲测补对：原配"簿×墓碑"，但墓碑佐证正文日期
+    // 不构成互斥——盲测判 C 类正确、引擎判 A 的反向bug。拆簿为两条后内部叠勾成对，墓碑退为佐证位）
+    { id: 'p_book', a: 'doc_register', b: 'doc_register2', kind: 'system_tamper' },
+    // 真矛盾②：记忆偏差（脚夫口述一日期漂移，需脚行流水补链）
     { id: 'p_worker', a: 'doc_register', b: 'po_liu1', kind: 'memory_bias', resolver: 'doc_tally' },
-    // 事实更新×2（两边都对，只是错位）：布商墓碑 vs 脚行流水日期不同人不同事；口述二 vs 县志疫期
+    // 事实更新×2（两边都对，只是错位）：布商墓碑 vs 县志疫期；口述二 vs 布商墓碑
     { id: 'p_tomb2', a: 'grey_tomb2', b: 'grey_epidemic', kind: 'fact_update' },
     { id: 'p_liu2', a: 'po_liu2', b: 'grey_tomb2', kind: 'fact_update' },
+    // ---- 2026-08-27 盲测补对 ----
+    // 口述一×流水："城门下等人雇脚"vs"当日有受雇记录"（盲测 1/1 提交·中）——等雇与当日受雇可并存，吸收为陷阱
+    { id: 'p_hire', a: 'po_liu1', b: 'doc_tally', kind: 'fact_update' },
+    // 簿正文×流水："殁于七月十二"vs"十二仍有陈六受雇"（拆簿后第二轮 1/1 提交·高）——两边各自为真：死的是布商，干活的是脚夫，同名错位，吸收为陷阱
+    { id: 'p_same', a: 'doc_register', b: 'doc_tally', kind: 'fact_update' },
   ],
   hints: [
     { trigger: 'start', text: '同名同姓案，先把两个"陈六"分开看。生死簿那页有两条勾录——先钉布商的死亡日期，那是全案的锚。' }, // 待人工终审

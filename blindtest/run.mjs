@@ -33,7 +33,7 @@ const SYSTEM =
   '你是一款阴间档案复核推理游戏的第一次接触的玩家。你只知道卷面上写的东西，' +
   '禁止假设卷面之外的任何设定。严格按问卷要求的形式作答，不确定的组合也要照实列出并标低确定度。'
 
-async function askOnce(caseId) {
+async function askOnce(caseId, runNo) {
   const q = readFileSync(join(__dirname, 'questions', `${caseId}.md`), 'utf8')
   const res = await fetch(API, {
     method: 'POST',
@@ -41,7 +41,8 @@ async function askOnce(caseId) {
     body: JSON.stringify({
       model: MODEL,
       messages: [
-        { role: 'system', content: SYSTEM },
+        // 尾缀批次号防 API 缓存（否则同题多轮会逐字复用首轮答案，不算独立样本）
+        { role: 'system', content: `${SYSTEM}（测试批次 #${runNo}-${Math.floor(Math.random() * 1e6)}）` },
         { role: 'user', content: q },
       ],
       temperature: 0.8,
@@ -71,7 +72,7 @@ for (const c of targets) {
     process.stdout.write(`[${c}] 第 ${k}/${runs} 轮请求中…`)
     const t0 = Date.now()
     try {
-      const answer = await askOnce(c)
+      const answer = await askOnce(c, k)
       const file = join(__dirname, 'results', `${c}-run${k}-${ts}.md`)
       const header =
         `# 盲测答卷 · ${c} · 第${k}轮\n\n` +
