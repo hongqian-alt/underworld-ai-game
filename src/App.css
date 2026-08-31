@@ -170,7 +170,7 @@
   margin-top: 10px;
   border-color: var(--vermil);
   background: var(--vermil);
-  color: #fff;
+  color: var(--on-vermil);
 }
 
 .btn.primary:disabled {
@@ -236,7 +236,7 @@
 }
 
 .desk-msg {
-  font-size: 14px;
+  font-size: var(--fs-verdict);
   color: var(--vermil);
 }
 
@@ -248,7 +248,8 @@
 }
 
 .aphint {
-  font-size: 13px;
+  font-size: var(--fs-note);
+  font-weight: var(--fw-note);
   color: var(--muted);
   border-left: 3px solid var(--line);
   padding-left: 8px;
@@ -351,6 +352,9 @@
   color: var(--vermil);
   padding: 4px 16px;
   letter-spacing: 3px;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-title);
+  font-family: var(--font-system);
 }
 
 .epilogue {
@@ -400,7 +404,9 @@
 }
 
 .epi-announce h3 {
-  font-size: 15px;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-title);
+  font-family: var(--font-system);
   letter-spacing: 2px;
   border-bottom: 1px solid var(--line);
   padding-bottom: 8px;
@@ -488,7 +494,7 @@
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: #050505;
+  background: var(--night-bg);
   flex-direction: column;
   gap: 56px;
   /* 黑盒报告问题2：小视口下多行文本溢出黑屏容器时不可滚 */
@@ -506,7 +512,7 @@
 }
 
 .epi-fin {
-  color: #6b6558;
+  color: var(--night-line);
   font-size: 14px;
   letter-spacing: 6px;
   opacity: 0;
@@ -515,7 +521,7 @@
 }
 
 .epi-line {
-  color: #e8e2d5;
+  color: var(--night-ink);
   font-size: 20px;
   letter-spacing: 3px;
   opacity: 0;
@@ -533,7 +539,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  color: #b9b2a2;
+  color: var(--night-dim);
   font-size: 15px;
 }
 
@@ -544,8 +550,8 @@
 
 .epi-form input {
   background: transparent;
-  border: 1px solid #6b6558;
-  color: #e8e2d5;
+  border: 1px solid var(--night-line);
+  color: var(--night-ink);
   padding: 6px 10px;
   border-radius: 2px;
   min-width: 240px;
@@ -599,7 +605,7 @@
 }
 
 .ts-dark-title {
-  color: #6b6558;
+  color: var(--night-line);
   font-size: 13px;
   letter-spacing: 2px;
 }
@@ -618,5 +624,30 @@
   position: sticky;
   bottom: 10px;
   z-index: 5;
-  box-shadow: 0 2px 10px rgba(58, 51, 42, 0.18);
+  box-shadow: var(--shadow-soft);
+}
+
+/* 美术计划 §4.4：静音开关常驻角标（左上，避尾声跳过按钮） */
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  z-index: 80;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-note);
+  font-family: var(--font-system);
+  color: var(--muted);
+  background: var(--paper-strong);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.sound-toggle:hover {
+  color: var(--ink);
+  border-color: var(--ink);
 }

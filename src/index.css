@@ -1,4 +1,5 @@
 :root {
+  /* === 基底层（纸卷色系，不动） === */
   --paper: #f4eee0;
   --paper-strong: #faf5e9;
   --paper-dim: #e9e1cd;
@@ -6,6 +7,53 @@
   --ink: #3a332a;
   --muted: #8b7f66;
   --vermil: #a03123;
+
+  /* === 语义层（美术计划 §3.1） === */
+  /* 冷证据阶：灰墨阶，覆盖取证类 UI（魄读/灰迹/勘验） */
+  --ev-cold-1: #8b7f66; /* 取证淡墨（同 --muted） */
+  --ev-cold-2: #6b6558; /* 取证中墨（黑屏次要字/边框共用） */
+  --ev-cold-3: #3a332a; /* 取证深墨（同 --ink） */
+
+  /* 暖证据阶：暖烛色，M2 前仅预留不启用（温暖证据上线时 body[data-act] 激活） */
+  --ev-warm-1: #c9925a; /* 暖烛（阳间通道） */
+  --ev-warm-2: #8a5e2e; /* 烛影 */
+
+  /* 幕色组：三幕纸色递进（body[data-act] 切换，纯挂载层） */
+  --act1-paper: var(--paper); /* 第一幕：基准纸色 */
+  --act2-paper: #ddd5c0; /* 第二幕：纸色沉、暖意抽离（毒性渗入） */
+  --act3-paper: #d4d0c8; /* 第三幕：灰白化（归零注视） */
+
+  /* 反馈语义 */
+  --ok-brush: var(--vermil); /* 朱批成立（改判成立/官方标记/关键锚点） */
+  --fail-ink: #5a5045; /* 闷墨（指错失败，非红色——朱砂纪律） */
+
+  /* 黑屏语义（归零注视的极态，第三幕终局/尾声） */
+  --night-bg: #050505; /* 黑屏背景 */
+  --night-ink: #e8e2d5; /* 黑屏主字 */
+  --night-dim: #b9b2a2; /* 黑屏辅助字 */
+  --night-line: #6b6558; /* 黑屏边框/次要 */
+
+  /* 朱批承载 */
+  --on-vermil: #ffffff; /* 朱批上的白字（按钮等） */
+
+  /* 阴影 */
+  --shadow-soft: 0 2px 10px rgba(58, 51, 42, 0.18); /* --ink 的 alpha 版 */
+
+  /* 字体层级（美术计划 §3.2：标题/判词/正文/批注四层级） */
+  --fs-title: 18px; /* 标题（结案标签/黑屏标题） */
+  --fs-verdict: 17px; /* 判词（官方文书正文） */
+  --fs-body: 15px; /* 正文（现有默认） */
+  --fs-note: 13px; /* 批注（提示/次要） */
+  --lh-tight: 1.4; /* 标题行距 */
+  --lh-body: 1.6; /* 正文行距（现有） */
+  --lh-loose: 1.8; /* 人写件行距（口述/字条） */
+  --fw-title: 600; /* 标题字重 */
+  --fw-body: 400; /* 正文字重（现有） */
+  --fw-note: 300; /* 批注字重 */
+
+  /* 字形区分（美术计划 §二.4：系统件仿宋 vs 人写件宋体，零 webfont） */
+  --font-system: 'FangSong', 'STFangsong', 'Songti SC', 'STSongti-SC', 'SimSun', serif;
+  --font-human: 'Songti SC', 'STSongti-SC', 'SimSun', 'Noto Serif SC', serif;
 }
 
 * {
@@ -19,6 +67,17 @@ body {
   font-family: 'Songti SC', 'STSongti-SC', 'SimSun', 'Noto Serif SC', serif;
   font-size: 15px;
   line-height: 1.6;
+}
+
+/* 美术计划 §二.2 三幕视觉递进：body[data-act] 切换纸色，纯挂载层 */
+body[data-act='1'] {
+  background: var(--act1-paper);
+}
+body[data-act='2'] {
+  background: var(--act2-paper);
+}
+body[data-act='3'] {
+  background: var(--act3-paper);
 }
 
 h1,

@@ -92,6 +92,19 @@ function App() {
     }
   }, [slot, slot?.data, caseData.id, startCase])
 
+  // 美术计划 §二.2 三幕视觉递进：按 FLOW id 派生幕号，body[data-act] 切换纸色（纯挂载层，零引擎改动）
+  const act = useMemo(() => {
+    const a2 = FLOW.findIndex((f) => f.id === 'm2_showdown')
+    const a3 = FLOW.findIndex((f) => f.id === 'm3_open')
+    return index < a2 ? 1 : index < a3 ? 2 : 3
+  }, [index])
+  useEffect(() => {
+    document.body.dataset.act = String(act)
+    return () => {
+      delete document.body.dataset.act
+    }
+  }, [act])
+
   const [selected, setSelected] = useState<string[]>([])
   const stmtMap = useMemo(() => new Map(caseData.statements.map((st) => [st.id, st])), [caseData])
 

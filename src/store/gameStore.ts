@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { PROLOGUE } from '../data/prologue'
 import * as rules from '../engine/rules'
 import type { CaseData, GameState } from '../engine/types'
+import { playBrushOk, playInkDull } from '../audio/sound'
 
 // 行为日志条目：who='user' 为玩家动作（点了什么按钮），who='sys' 为引擎结果
 export interface LogEntry {
@@ -73,6 +74,7 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     const user = `提交指错：「${stmtLabel(caseData, a)}」+「${stmtLabel(caseData, b)}」`
     const prevLen = state.log.length
     const r = rules.accuse(state, caseData, a, b)
+    if (!r.correct) playInkDull()
     set({ state: r.state, msg: r.msg, entries: pushEntries(entries, user, prevLen, r.state, r.msg) })
   },
 
@@ -84,6 +86,7 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       : `处理未知矛盾 ${pairId} → 改判`
     const prevLen = state.log.length
     const r = rules.amend(state, caseData, pairId)
+    if (r.ok) playBrushOk()
     set({ state: r.state, msg: r.msg, entries: pushEntries(entries, user, prevLen, r.state, r.msg) })
   },
 

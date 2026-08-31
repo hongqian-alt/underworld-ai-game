@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { CaseData } from '../engine/types'
+import { playSealCase } from '../audio/sound'
 import { PROLOGUE } from '../data/prologue'
 import { CASE1 } from '../data/case1'
 import { CASE2 } from '../data/case2'
@@ -126,12 +127,14 @@ export const useSessionStore = create<SessionStore>()((set) => ({
   index: saved?.index ?? 0,
   totalHollow: saved?.totalHollow ?? 0,
   finishedCases: saved?.finishedCases ?? 0,
-  finishSession: (hollowGained) =>
+  finishSession: (hollowGained) => {
+    playSealCase()
     set((s) => ({
       index: s.index + 1,
       totalHollow: s.totalHollow + hollowGained,
       finishedCases: s.finishedCases + 1,
-    })),
+    }))
+  },
   advanceFlow: () => set((s) => ({ index: s.index + 1 })),
 }))
 
