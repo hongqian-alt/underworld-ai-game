@@ -3,8 +3,10 @@ import './App.css'
 import { COST, SOURCE_ACTION, SOURCE_COST } from './engine/rules'
 import type { Pair, SourceType } from './engine/types'
 import { useGameStore, type LogEntry } from './store/gameStore'
-import { CASE_SLOTS, useSessionStore } from './store/sessionStore'
+import { FLOW, useSessionStore } from './store/sessionStore'
 import Epilogue from './Epilogue'
+import TextScreen from './screens/TextScreen'
+import type { SessionStats } from './data/interludes'
 
 const SOURCE_LABEL: Record<SourceType, string> = {
   document: '公文',
@@ -75,11 +77,15 @@ function App() {
   const index = useSessionStore((s) => s.index)
   const finishedCases = useSessionStore((s) => s.finishedCases)
   const finishSession = useSessionStore((s) => s.finishSession)
+  const advanceFlow = useSessionStore((s) => s.advanceFlow)
   const totalHollow = useSessionStore((s) => s.totalHollow)
   const entries = useGameStore((s) => s.entries)
 
   // 会话层流转：当前槽位有数据但尚未装载时载入；无数据则显示"待续"占位
-  const slot = CASE_SLOTS[index]
+  const item = FLOW[index]
+  const slot = item?.kind === 'case' ? item : undefined
+  // 文本屏（结算/名单化）可读取的会话层数据汇总（现有 store 字段，不新增状态）
+  const stats: SessionStats = { totalHollow, finishedCases }
   useEffect(() => {
     if (slot?.data && slot.data.id !== caseData.id) {
       startCase(slot.data)
@@ -124,10 +130,13 @@ function App() {
     }
   }
 
-  // 当前槽位尚无数据 → "待续"占位；全部案件归档完毕 → 尾声钩子（任务4，
-  // 读取跨案累计 totalHollow，隐藏变量不在此外的任何界面露出）。
-  if (!slot?.data) {
-    if (index >= CASE_SLOTS.length) {
+  // 流程分发（骨架任务）：文本屏走 TextScreen；Epilogue（含邮箱提交/90 秒时序等
+  // 终局性逻辑）挂全游戏结尾；案件项走下方现有调查/结案 UI。
+  if (!slot) {
+    if (item?.kind === 'screen') {
+      return <TextScreen data={item.screen} stats={stats} onDone={() => advanceFlow()} />
+    }
+    if (item?.kind === 'epilogue' || index >= FLOW.length) {
       return <Epilogue totalHollow={totalHollow} />
     }
     return (
@@ -135,9 +144,9 @@ function App() {
         <main className="endpanel">
           <span className="endtag">卷宗待续</span>
           <ul className="orderlist">
-            {CASE_SLOTS.map((s, i) => (
-              <li key={s.id} className={i < index ? 'done' : i === index ? 'now' : ''}>
-                {i < index ? '✓' : i === index ? '▶' : '　'} {s.label}
+            {FLOW.filter((f) => f.kind === 'case').map((f, ci) => (
+              <li key={f.id} className={ci < finishedCases ? 'done' : ci === finishedCases ? 'now' : ''}>
+                {ci < finishedCases ? '✓' : ci === finishedCases ? '▶' : '　'} {f.label}
               </li>
             ))}
           </ul>
@@ -163,7 +172,7 @@ function App() {
             className="btn primary"
             onClick={() => finishSession(state.hollowCount)}
           >
-            结案归档 · 进入下一案
+            结案归档 · 继续
           </button>
           <GameLog entries={entries} />
         </main>
