@@ -363,3 +363,136 @@
 .egg-slot {
   min-height: 6px;
 }
+
+/* 尾声钩子（任务4）：90 秒序列 —— 公告/空壳翻转/黑屏/邮箱 */
+.epi {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.epi-announce {
+  width: min(560px, 92vw);
+  border: 1px solid var(--line);
+  background: var(--paper-strong);
+  padding: 26px 30px;
+  line-height: 2.1;
+}
+
+.epi-announce h3 {
+  font-size: 15px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.epi-announce p {
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.epi-announce > p:last-of-type {
+  text-align: right;
+  color: var(--muted);
+}
+
+.epi-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+}
+
+.epi-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--line);
+  padding: 7px 2px;
+  font-size: 14px;
+}
+
+.epi-status {
+  color: var(--muted);
+}
+
+.epi-row.hollow .epi-status {
+  color: var(--vermil);
+  border: 1px solid var(--vermil);
+  padding: 1px 8px;
+  animation: epiStamp 0.5s ease-out forwards;
+}
+
+.epi-empty {
+  color: var(--muted);
+}
+
+/* 黑屏段：黑底上一行字 → 邮箱输入 */
+.epi-black {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #050505;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.epi-line {
+  color: #e8e2d5;
+  font-size: 20px;
+  letter-spacing: 3px;
+  opacity: 0;
+  animation: epiFadeIn 2.4s forwards;
+}
+
+.epi-done,
+.epi-form {
+  opacity: 0;
+  animation: epiFadeIn 1.6s forwards;
+  animation-delay: 400ms;
+}
+
+.epi-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #b9b2a2;
+  font-size: 15px;
+}
+
+.epi-formrow {
+  display: flex;
+  gap: 10px;
+}
+
+.epi-form input {
+  background: transparent;
+  border: 1px solid #6b6558;
+  color: #e8e2d5;
+  padding: 6px 10px;
+  border-radius: 2px;
+  min-width: 240px;
+}
+
+.epi-btn {
+  margin-top: 0;
+}
+
+@keyframes epiFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes epiStamp {
+  0% {
+    opacity: 0;
+    transform: rotate(-4deg) scale(1.6);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-4deg) scale(1);
+  }
+}

@@ -4,6 +4,7 @@ import { COST, SOURCE_ACTION, SOURCE_COST } from './engine/rules'
 import type { Pair, SourceType } from './engine/types'
 import { useGameStore, type LogEntry } from './store/gameStore'
 import { CASE_SLOTS, useSessionStore } from './store/sessionStore'
+import Epilogue from './Epilogue'
 
 const SOURCE_LABEL: Record<SourceType, string> = {
   document: '公文',
@@ -74,6 +75,7 @@ function App() {
   const index = useSessionStore((s) => s.index)
   const finishedCases = useSessionStore((s) => s.finishedCases)
   const finishSession = useSessionStore((s) => s.finishSession)
+  const totalHollow = useSessionStore((s) => s.totalHollow)
   const entries = useGameStore((s) => s.entries)
 
   // 会话层流转：当前槽位有数据但尚未装载时载入；无数据则显示"待续"占位
@@ -122,9 +124,12 @@ function App() {
     }
   }
 
-  // 当前槽位尚无数据 → "待续"占位（任务3补数据后自动接上）。
-  // 注意：不在此展示任何隐藏变量，空壳计数只在尾声钩子（任务4）读取。
+  // 当前槽位尚无数据 → "待续"占位；全部案件归档完毕 → 尾声钩子（任务4，
+  // 读取跨案累计 totalHollow，隐藏变量不在此外的任何界面露出）。
   if (!slot?.data) {
+    if (index >= CASE_SLOTS.length) {
+      return <Epilogue totalHollow={totalHollow} />
+    }
     return (
       <div className="screen tbc">
         <main className="endpanel">
