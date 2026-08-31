@@ -94,7 +94,8 @@ export function accuse(state: GameState, c: CaseData, a: string, b: string): { s
     return { state: next, correct: false, msg: '这不是矛盾：两边都对，只是时间错位。（警戒度+10）' }
   }
   next.log.push('【指错·误】两处陈述并不互斥。（警戒度+10）')
-  return { state: next, correct: false, msg: '指错不成立。（警戒度+10）' }
+  // 黑盒报告问题3：失败反馈带错因，与 fact_update 分支粒度一致
+  return { state: next, correct: false, msg: '指错不成立：两处陈述并不互斥。（警戒度+10）' }
 }
 
 export function isAmendable(_c: CaseData, state: GameState, pair: Pair): boolean {
@@ -163,7 +164,11 @@ export function askCuiyu(state: GameState, c: CaseData): { state: GameState; hin
   const next = spend(state, c, COST.ask)!
   next.cuiyuAsked += 1
   const progress = next.foundPairs.length + Math.min(next.accusedWrong, 1)
-  const hint = c.hints[Math.min(progress, c.hints.length - 1)]
+  // 黑盒报告问题4：质询池剔除开局批注（trigger='start' 开局已展示），
+  // 保证每次质询相对开局批注都有增量；progress 推进时给下一层提示。
+  const pool = c.hints.filter((h) => h.trigger !== 'start')
+  const list = pool.length > 0 ? pool : c.hints
+  const hint = list[Math.min(progress, list.length - 1)]
   next.log.push(`【质询崔钰 -${COST.ask}】"${hint.text}"`)
   return { state: next, hint: hint.text, msg: '崔钰压低了声音。' }
 }

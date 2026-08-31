@@ -107,14 +107,17 @@ export const useGameStore = create<GameStore>()((set, get) => ({
   },
 
   askCuiyu: () => {
-    const { caseData, state, entries } = get()
+    const { caseData, state, entries, hint: prevHint } = get()
     const user = '质询崔钰'
     const prevLen = state.log.length
     const r = rules.askCuiyu(state, caseData)
+    // 黑盒报告问题4：进展不变时重复质询给同一句——明确告知"无新增"，玩家不再白花魂力
+    const repeat = r.hint !== undefined && r.hint === prevHint
+    const msg = repeat ? '崔钰还是上次那句话——没有新的。' : r.msg
     if (r.hint !== undefined) {
-      set({ state: r.state, hint: r.hint, msg: r.msg, entries: pushEntries(entries, user, prevLen, r.state, r.msg) })
+      set({ state: r.state, hint: r.hint, msg, entries: pushEntries(entries, user, prevLen, r.state, msg) })
     } else {
-      set({ state: r.state, msg: r.msg, entries: pushEntries(entries, user, prevLen, r.state, r.msg) })
+      set({ state: r.state, msg, entries: pushEntries(entries, user, prevLen, r.state, msg) })
     }
   },
 }))

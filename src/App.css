@@ -318,15 +318,32 @@
 }
 
 /* 结案面板 */
+/* 黑盒报告问题1/2：flex:1（basis:0）把面板高度锁死在视口高——长文本（记功公告名单）
+   溢出容器外且页面不可滚；居中布局又让溢出内容上下被裁。改 basis:auto 让容器随内容
+   撑高（页面可滚），再以首尾 margin:auto 实现安全居中（内容多时 margin 收 0）。 */
 .endpanel {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
   text-align: center;
   padding: 40px 24px;
+}
+
+.endpanel > :first-child {
+  margin-top: auto;
+}
+
+.endpanel > :last-child {
+  margin-bottom: auto;
+}
+
+/* 主按钮吸底常显：长文本屏（记功公告/终局段落）按钮不再滚出视口 */
+.endpanel > .btn.primary {
+  position: sticky;
+  bottom: 18px;
 }
 
 .endtag {
@@ -366,9 +383,10 @@
 
 /* 尾声钩子（任务4）：90 秒序列 —— 公告/空壳翻转/黑屏/邮箱 */
 .epi {
+  position: relative;
   min-height: 100svh;
   display: flex;
-  align-items: center;
+  align-items: safe center;
   justify-content: center;
   padding: 40px 20px;
 }
@@ -419,6 +437,22 @@
 }
 
 .epi-row.hollow .epi-status {
+  color: var(--muted);
+}
+
+/* 黑盒报告问题8：翻转残影——"已修正"删除线残影 + "空壳"印章，回滚看得清 */
+.epi-was {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.epi-sep {
+  opacity: 0.5;
+  margin: 0 6px;
+}
+
+.epi-hollow {
+  display: inline-block;
   color: var(--vermil);
   border: 1px solid var(--vermil);
   padding: 1px 8px;
@@ -429,6 +463,26 @@
   color: var(--muted);
 }
 
+/* 黑盒报告问题12：尾声跳过按钮（全程右上角常显） */
+.epi-skip {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 70;
+  font-size: 13px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 4px 14px;
+  cursor: pointer;
+}
+
+.epi-skip:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
 /* 黑屏段：黑底上一行字 → 邮箱输入 */
 .epi-black {
   position: fixed;
@@ -437,6 +491,27 @@
   background: #050505;
   flex-direction: column;
   gap: 56px;
+  /* 黑盒报告问题2：小视口下多行文本溢出黑屏容器时不可滚 */
+  overflow-y: auto;
+  justify-content: safe center;
+}
+
+/* 黑盒报告问题10/11：订阅错误反馈与终点完结标识 */
+.epi-err {
+  color: var(--vermil);
+  font-size: 13px;
+  letter-spacing: 1px;
+  opacity: 0;
+  animation: epiFadeIn 1s forwards;
+}
+
+.epi-fin {
+  color: #6b6558;
+  font-size: 14px;
+  letter-spacing: 6px;
+  opacity: 0;
+  animation: epiFadeIn 2s forwards;
+  animation-delay: 800ms;
 }
 
 .epi-line {
@@ -533,4 +608,15 @@
   opacity: 0;
   animation: epiFadeIn 1.6s forwards;
   animation-delay: 2400ms;
+  /* 黑盒报告问题2：黑屏长文本（终局段落）按钮吸底常显，不随文本滚出视口 */
+  position: sticky;
+  bottom: 18px;
+}
+
+/* 黑盒报告问题2：案件页"提交指错"主按钮吸底——小视口下不必把按钮滚进视口再点 */
+.desk > .btn.primary {
+  position: sticky;
+  bottom: 10px;
+  z-index: 5;
+  box-shadow: 0 2px 10px rgba(58, 51, 42, 0.18);
 }

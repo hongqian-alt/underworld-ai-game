@@ -151,4 +151,34 @@ describe('质询崔钰', () => {
     expect(r3.msg).toContain('不再见你')
     expect(r3.state.cuiyuAsked).toBe(2)
   })
+
+  // 黑盒报告问题4：质询不重复开局批注（trigger='start'），首次质询即有增量
+  it('质询池剔除开局批注，进展推进换下一层提示', () => {
+    const c: CaseData = {
+      ...CASE,
+      ap: 99,
+      hints: [
+        { trigger: 'start', text: '开局批注' },
+        { trigger: 'found1', text: '第一条线索' },
+        { trigger: 'found2', text: '第二条线索' },
+      ],
+    }
+    const s0 = initState(c)
+    const r1 = askCuiyu(s0, c)
+    expect(r1.hint).toBe('第一条线索')
+    // 错一次指错推进质询深度
+    const s1 = accuse(s0, c, 'grey1', 'grey1').state
+    const r2 = askCuiyu(s1, c)
+    expect(r2.hint).toBe('第二条线索')
+  })
+})
+
+// 黑盒报告问题3：失败反馈粒度一致——普通失败也说明错因
+describe('指错失败反馈粒度', () => {
+  it('无关联指错的反馈带错因与惩罚', () => {
+    const s = initState(CASE)
+    const r = accuse(s, CASE, 'grey1', 'grey1')
+    expect(r.msg).toContain('并不互斥')
+    expect(r.msg).toContain('警戒度+10')
+  })
 })

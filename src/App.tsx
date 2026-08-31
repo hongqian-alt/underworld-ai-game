@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { COST, SOURCE_ACTION, SOURCE_COST } from './engine/rules'
 import type { Pair, SourceType } from './engine/types'
@@ -95,6 +95,13 @@ function App() {
   const [selected, setSelected] = useState<string[]>([])
   const stmtMap = useMemo(() => new Map(caseData.statements.map((st) => [st.id, st])), [caseData])
 
+  // 黑盒报告问题2：反馈自动跟随——指错/质询等操作出结果后，滚到消息处（不跟随焦点是原复现根因之一）
+  // hook 必须无条件调用；早退分支（文本屏/尾声）无 desk-msg 挂载，ref 为 null 即无操作
+  const msgRef = useRef<HTMLParagraphElement>(null)
+  useEffect(() => {
+    if (msg) msgRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [msg])
+
   // 开局批注：hints 里 trigger=start 的条目自动展示作教学引导（数据已有，仅展示层）
   const startHint = useMemo(
     () => caseData.hints.find((h) => h.trigger === 'start')?.text ?? '',
@@ -190,6 +197,20 @@ function App() {
       : state.ap < COST.amend
         ? `魂力不足以改判（需 ${COST.amend}）——可驳回（−${COST.dismiss}）处置已入卷矛盾，或挂起等下一日。`
         : ''
+  // 黑盒报告问题5：资源保底提示——余下必处置矛盾的处置成本事前可见，玩家可判断资源够不够走改判路径
+  const remainingAmend = amendableTotal - state.resolvedPairs.length
+  const amendBudget =
+    remainingAmend > 0
+      ? `余下待清 ${remainingAmend} 处：全改判需 ${remainingAmend * COST.amend} 点，驳回共需 ${remainingAmend} 点（当前魂力 ${state.ap}）。` +
+        (state.ap < remainingAmend * COST.amend
+          ? '魂力不够全部改判——驳回（每处 −1）也是处置，别把矛盾拖过作七。'
+          : '')
+      : ''
+  // 黑盒报告问题3：连续指错失败的止损引导（不改引擎惩罚数值，只做引导）
+  const wrongGuide =
+    state.accusedWrong >= 3
+      ? `已错 ${state.accusedWrong} 次指错——不互斥的两条未必是矛盾。质询崔钰（−${COST.ask}）换方向，或驳回已入卷矛盾止损。`
+      : ''
   // 已入卷矛盾全部处置但尚未结案：明确告诉玩家"还要继续找"（只读状态做展示）
   const allFoundHandled =
     state.foundPairs.length > 0 && state.foundPairs.every((pid) => state.resolvedPairs.includes(pid))
@@ -260,10 +281,9 @@ function App() {
                 </div>
               ) : (
                 <div key={slot} className="slot empty">
-                  在左侧案卷堆点选两条陈述对照
+                  在左侧案卷堆点选两条陈述对照（放入第三条会顶掉最早的一条）
                 </div>
-              )
-            })}
+              )})}
           </div>
           <button
             type="button"
@@ -280,9 +300,19 @@ function App() {
               （已处置 {state.resolvedPairs.length} / 待清 {amendableTotal} 处，全部处置方可结案）
             </span>
           </h3>
+          {/* 黑盒报告问题9：改判/驳回规则事前说明，不再等首次改判失败才告知 */}
+          <p className="aphint">
+            改判（−{COST.amend}）需证据链完整——记忆类矛盾要先取得第三条记录钉住事实；驳回（−{COST.dismiss}）即时处置，执念滞留。
+          </p>
+          {amendBudget && <p className="aphint">{amendBudget}</p>}
           {apHint && <p className="aphint">{apHint}</p>}
+          {wrongGuide && <p className="aphint">{wrongGuide}</p>}
           {nextHint && <p className="aphint">{nextHint}</p>}
-          {msg && <p className="desk-msg">{msg}</p>}
+          {msg && (
+            <p className="desk-msg" ref={msgRef}>
+              {msg}
+            </p>
+          )}
           {state.foundPairs.length === 0 ? (
             <p className="muted">尚无入卷矛盾。</p>
           ) : (
