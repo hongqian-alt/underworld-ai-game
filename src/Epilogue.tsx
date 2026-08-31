@@ -2,6 +2,7 @@
 // 铁律：不做任何 UI 解释（切片文档五节第3条）；本文件文案初稿全部标 // 待人工终审。
 // 任务6埋点挂点（PostHog 接入时补）：进入本组件＝epilogue_dwell 起点；邮箱提交＝email_submit。
 import { useEffect, useState } from 'react'
+import Seal from './components/Seal'
 
 // —— 时序（毫秒）：整体约 60–90 秒，随空壳份数浮动 ——
 const ANNOUNCE_MS = 9000 // 系统公告停留
@@ -31,7 +32,6 @@ const blackLine = (n: number) => `本月，信息科共修正冤情 ${n} 处。`
 const EMAIL_PROMPT = '第二部上线时通知你为什么。' // 出自切片设计五节第4条，待终审
 const EMAIL_DONE = '已登记。'
 const EMAIL_ERR = '这地址收不到信——请填一个有效邮箱。' // 黑盒报告问题10：无效提交要有反馈，待终审
-const FIN_MARK = '全卷完' // 黑盒报告问题11：终点屏完结标识，待终审
 const SKIP_LABEL = '跳过' // 黑盒报告问题12：尾声动画可跳过，待终审
 // ——— 文案区结束 ———
 
@@ -178,8 +178,10 @@ export default function Epilogue({ totalHollow }: { totalHollow: number }) {
             {err && <p className="epi-err">{err}</p>}
           </form>
         ))}
-      {/* 黑盒报告问题11：终点屏完结标识——通关与否一眼可辨 */}
-      {phase === 'email' && <p className="epi-fin">{FIN_MARK}</p>}
+      {/* 黑盒报告问题11：终点屏完结标识——"全卷完"印章（阶段B SVG 结构版） */}
+      {phase === 'email' && (
+        <Seal kind="quanjuan" size={88} className="epi-fin-seal" />
+      )}
     </div>
   )
 }

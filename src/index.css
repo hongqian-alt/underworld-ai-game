@@ -62,7 +62,11 @@
 
 body {
   margin: 0;
-  background: var(--paper);
+  /* 全局纸纤维纹理（阶段B结构版）：底色随幕切换（background-color），纹理常驻（background-image） */
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse at 18% 12%, rgba(58, 51, 42, 0.02) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 90%, rgba(58, 51, 42, 0.025) 0%, transparent 40%);
   color: var(--ink);
   font-family: 'Songti SC', 'STSongti-SC', 'SimSun', 'Noto Serif SC', serif;
   font-size: 15px;
@@ -71,13 +75,13 @@ body {
 
 /* 美术计划 §二.2 三幕视觉递进：body[data-act] 切换纸色，纯挂载层 */
 body[data-act='1'] {
-  background: var(--act1-paper);
+  background-color: var(--act1-paper);
 }
 body[data-act='2'] {
-  background: var(--act2-paper);
+  background-color: var(--act2-paper);
 }
 body[data-act='3'] {
-  background: var(--act3-paper);
+  background-color: var(--act3-paper);
 }
 
 h1,

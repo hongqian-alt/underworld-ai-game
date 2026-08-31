@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>阶段B资产预览 · 结构版（CSS/SVG）</title>
+<style>
+  :root {
+    --paper: #f4eee0; --paper-strong: #faf5e9; --paper-dim: #e9e1cd;
+    --line: #cfc4ab; --ink: #3a332a; --muted: #8b7f66; --vermil: #a03123;
+  }
+  body { margin: 0; padding: 40px 24px; background: var(--paper); color: var(--ink);
+    font-family: 'Songti SC', 'STSongti-SC', 'SimSun', serif; line-height: 1.6; }
+  h1 { font-size: 22px; letter-spacing: 4px; }
+  h2 { font-size: 16px; letter-spacing: 3px; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-top: 48px; }
+  .note { color: var(--muted); font-size: 13px; }
+  .row { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; align-items: flex-start; }
+  .card { border: 1px solid var(--line); padding: 16px; min-width: 200px; min-height: 120px; }
+  .card p { margin: 8px 0 0; font-size: 13px; color: var(--muted); text-align: center; }
+
+  /* 纸纹三件 */
+  .paper-normal { background-color: var(--paper-strong); background-image:
+    radial-gradient(ellipse at 22% 14%, rgba(58,51,42,.03) 0%, transparent 42%),
+    radial-gradient(ellipse at 78% 82%, rgba(139,127,102,.045) 0%, transparent 38%); }
+  .paper-old { background-color: var(--paper-dim); background-image:
+    radial-gradient(ellipse at 70% 20%, rgba(138,94,46,.10) 0%, transparent 34%),
+    radial-gradient(ellipse at 15% 75%, rgba(138,94,46,.13) 0%, transparent 30%),
+    radial-gradient(ellipse at 45% 50%, rgba(58,51,42,.05) 0%, transparent 45%); }
+  .paper-system { background-color: var(--paper-strong); background-image:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(58,51,42,.03) 3px 4px); }
+
+  /* 公告卡角花 */
+  .announce-demo { width: 340px; border: 1px solid var(--line); padding: 22px 26px; line-height: 2;
+    background-color: var(--paper-strong); background-image:
+    radial-gradient(ellipse at 22% 14%, rgba(58,51,42,.03) 0%, transparent 42%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cpath d='M2 32 V8 Q2 2 8 2 H32' fill='none' stroke='%23cfc4ab' stroke-width='2'/%3E%3Cpath d='M7 32 V12 Q7 7 12 7 H32' fill='none' stroke='%23cfc4ab' stroke-width='1'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cpath d='M32 2 V26 Q32 32 26 32 H2' fill='none' stroke='%23cfc4ab' stroke-width='2'/%3E%3Cpath d='M27 2 V22 Q27 27 22 27 H2' fill='none' stroke='%23cfc4ab' stroke-width='1'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: center, top left, bottom right; }
+  .announce-demo h3 { margin: 0 0 10px; font-size: 17px; letter-spacing: 2px;
+    border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .announce-demo p { margin: 0; font-size: 14px; }
+
+  /* 符号墙底纹 */
+  .ignite-demo { position: relative; overflow: hidden; background: #050505; color: #e8e2d5;
+    padding: 40px 30px; text-align: center; width: 320px; }
+  .ignite-demo::before { content: ''; position: absolute; inset: 0; pointer-events: none; background-image:
+    radial-gradient(circle at 50% 45%, rgba(160,49,35,.14) 0%, transparent 34%),
+    repeating-linear-gradient(0deg, transparent 0 26px, rgba(232,226,213,.05) 26px 27px),
+    repeating-linear-gradient(90deg, transparent 0 26px, rgba(232,226,213,.05) 26px 27px); }
+  .ignite-demo span { position: relative; letter-spacing: 4px; }
+</style>
+</head>
+<body>
+<h1>阶段B 资产预览 · 结构版</h1>
+<p class="note">CSS/SVG 结构临时版——正式笔触资产由你在 Seedream 生成后替换。同一模板族：水墨底＋朱批红纸卷风。</p>
+
+<h2>一、案卷纸纹 ×3</h2>
+<div class="row">
+  <div class="card paper-normal" style="width:220px"><p>普通案卷纸<br>（全局底/普通卷宗）</p></div>
+  <div class="card paper-old" style="width:220px"><p>旧档纸<br>（旧档/灰迹类）</p></div>
+  <div class="card paper-system" style="width:220px"><p>系统件纸<br>（公文/陈述条）</p></div>
+</div>
+
+<h2>二、印章 ×7（＋任意文字扩展）</h2>
+<div class="row" id="seals"></div>
+
+<h2>三、角色剪影 ×3</h2>
+<div class="row" id="sils"></div>
+
+<h2>四、界面框线件（公告卡对角角花）</h2>
+<div class="announce-demo">
+  <h3>幽冥信息管理总署 · 例行巡检公告</h3>
+  <p>本月度卷宗例行巡检现已启动。系统将对此前已办结卷宗逐份复查，复查期间部分卷宗状态将发生变动。</p>
+</div>
+
+<h2>五、符号墙底纹（科技点燃屏）</h2>
+<div class="ignite-demo"><span>【科技点燃 · 续弦胶】</span></div>
+
+<script>
+// 印章（与 src/components/Seal.tsx 同构）
+const ROUGH = '30 2.5 46 1.5 21 3';
+const seals = [
+  { label:'结案', shape:'square', color:'#a03123' },
+  { label:'归档', shape:'square', color:'#a03123' },
+  { label:'暂缓', shape:'rect', color:'#a03123' },
+  { label:'复核', shape:'circle', color:'#a03123' },
+  { label:'空壳', shape:'square', color:'#8b7f66' },
+  { label:'辛字号', shape:'rect', color:'#8b7f66' },
+  { label:'全卷完', shape:'square', color:'#a03123' },
+];
+document.getElementById('seals').innerHTML = seals.map(s => {
+  const rot = s.label==='空壳' ? -6 : s.label==='辛字号' ? 4 : -2;
+  const font = `font-family="STKaiti, KaiTi, serif" font-weight="700" fill="${s.color}" stroke="none"`;
+  let inner = '';
+  if (s.shape==='rect') {
+    inner = `<g transform="rotate(${rot} 60 37.5)" fill="none" stroke="${s.color}">
+      <rect x="5" y="7" width="110" height="61" stroke-width="4.5" stroke-dasharray="${ROUGH}" opacity=".92"/>
+      <rect x="11" y="12.5" width="98" height="50" stroke-width="1.2" opacity=".7"/>
+      <text x="60" y="49" text-anchor="middle" font-size="30" letter-spacing="4" ${font}>${s.label}</text></g>`;
+  } else if (s.shape==='circle') {
+    inner = `<g transform="rotate(${rot} 40 40)" fill="none" stroke="${s.color}">
+      <circle cx="40" cy="40" r="34" stroke-width="4.5" stroke-dasharray="${ROUGH}" opacity=".92"/>
+      <circle cx="40" cy="40" r="29" stroke-width="1.2" opacity=".7"/>
+      <text x="40" y="51" text-anchor="middle" font-size="26" ${font}>${s.label}</text></g>`;
+  } else {
+    const chars = [...s.label];
+    const texts = chars.map((c,i)=>`<text x="40" y="${chars.length>1?35+i*26:51}" text-anchor="middle" font-size="26" ${font}>${c}</text>`).join('');
+    inner = `<g transform="rotate(${rot} 40 40)" fill="none" stroke="${s.color}">
+      <rect x="7" y="7" width="66" height="66" stroke-width="4.5" stroke-dasharray="${ROUGH}" opacity=".92"/>
+      <rect x="13" y="13" width="54" height="54" stroke-width="1.2" opacity=".7"/>${texts}</g>`;
+  }
+  const w = s.shape==='rect' ? 115 : 72, h = s.shape==='rect' ? 72 : 72;
+  return `<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:130px">
+    <svg width="${w}" height="${h}" viewBox="${s.shape==='rect'?'0 0 120 75':'0 0 80 80'}">${inner}</svg></div>`;
+}).join('');
+
+// 剪影（与 src/components/Silhouette.tsx 同构）
+const sils = {
+  cuiyu: `<g fill="#3a332a">
+    <path d="M100 38 Q78 36 74 16 Q96 4 124 10 Q126 30 100 38 Z"/>
+    <ellipse cx="52" cy="20" rx="22" ry="6" transform="rotate(-12 52 20)"/>
+    <ellipse cx="148" cy="16" rx="22" ry="6" transform="rotate(10 148 16)"/>
+    <circle cx="100" cy="52" r="20"/><rect x="92" y="66" width="16" height="14"/>
+    <path d="M100 80 Q64 86 54 110 L40 236 Q46 252 66 248 L74 258 L126 258 L134 248 Q154 252 160 236 L146 110 Q136 86 100 80 Z"/>
+    <path d="M126 128 Q158 136 166 160 Q168 172 156 172 Q138 168 122 152 Z"/>
+    <rect x="158" y="128" width="5" height="34" transform="rotate(24 160 145)"/>
+    <path d="M168 122 Q176 128 172 138 Q166 134 168 122 Z"/></g>`,
+  yuangui: `<g fill="#3a332a">
+    <circle cx="98" cy="34" r="9"/><circle cx="112" cy="28" r="6"/><circle cx="86" cy="26" r="5"/>
+    <circle cx="102" cy="52" r="19"/>
+    <path d="M118 66 Q146 82 150 116 L158 210 Q160 232 142 238 L64 246 Q48 244 50 224 L72 118 Q80 84 104 68 Z"/>
+    <path d="M146 120 Q166 140 164 176 Q158 186 148 180 Q142 152 138 132 Z"/>
+    <path d="M76 120 Q60 146 62 184 Q68 194 78 188 Q84 152 88 132 Z"/></g>`,
+  xiaogui: `<g><g fill="#3a332a">
+    <circle cx="94" cy="76" r="40" transform="rotate(-10 94 76)"/>
+    <path d="M68 44 Q60 28 70 18 Q76 32 80 40 Z"/>
+    <path d="M116 40 Q126 26 122 14 Q112 26 106 36 Z"/>
+    <path d="M94 112 Q66 118 62 148 L56 224 Q58 240 76 240 L116 240 Q132 238 132 222 L124 146 Q120 118 94 112 Z"/>
+    <rect x="72" y="238" width="16" height="26" rx="7"/><rect x="106" y="238" width="16" height="26" rx="7"/></g>
+    <circle cx="95" cy="170" r="9" fill="#a03123" opacity=".85"/></g>`,
+};
+document.getElementById('sils').innerHTML = Object.entries(sils).map(([k,inner]) =>
+  `<div class="card" style="display:flex;align-items:flex-end;justify-content:center">
+    <svg width="130" height="195" viewBox="0 0 200 300">${inner}</svg>
+    <p style="width:100%">${{cuiyu:'崔钰',yuangui:'冤鬼',xiaogui:'小鬼（肚上朱印＝被系统标记）'}[k]}</p></div>`).join('');
+</script>
+</body>
+</html>
