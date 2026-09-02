@@ -78,6 +78,7 @@ function App() {
   const finishedCases = useSessionStore((s) => s.finishedCases)
   const finishSession = useSessionStore((s) => s.finishSession)
   const advanceFlow = useSessionStore((s) => s.advanceFlow)
+  const igniteFeed = useSessionStore((s) => s.igniteFeed)
   const totalHollow = useSessionStore((s) => s.totalHollow)
   const entries = useGameStore((s) => s.entries)
 
@@ -152,9 +153,10 @@ function App() {
 
   // 流程分发（骨架任务）：文本屏走 TextScreen；Epilogue（含邮箱提交/90 秒时序等
   // 终局性逻辑）挂全游戏结尾；案件项走下方现有调查/结案 UI。
+  // 点燃屏（ScreenData.ignite）推进走 igniteFeed：喂归零轨 +1（M1 埋机制，M2 显影）
   if (!slot) {
     if (item?.kind === 'screen') {
-      return <TextScreen data={item.screen} stats={stats} onDone={() => advanceFlow()} />
+      return <TextScreen data={item.screen} stats={stats} onDone={() => (item.screen.ignite ? igniteFeed() : advanceFlow())} />
     }
     if (item?.kind === 'epilogue' || index >= FLOW.length) {
       return <Epilogue totalHollow={totalHollow} />

@@ -40,6 +40,7 @@ export const FLOW: FlowItem[] = [
   screenItem(INTERLUDES.after_zouhun),
   caseItem('第六案 · 二十年的一个签名', CASE6),
   screenItem(INTERLUDES.ignite_3),
+  screenItem(INTERLUDES.after_qianming),
   // ——— M1 末：假胜利＋双爆（暂缓名单初显，⑤号反转初显）———
   screenItem(INTERLUDES.m1_victory),
   screenItem(INTERLUDES.m1_double),
@@ -68,31 +69,41 @@ interface SessionStore {
   // 跨案累计的空壳计数（每案改判+1，尾声钩子读取）
   totalHollow: number
   finishedCases: number
+  // 科技点燃计数（M1 埋机制：每点燃一项+1；归零轨总值＝totalHollow+igniteCount，M2 显影为压力。
+  // 不并入 totalHollow——空壳名单口径＝"你经手改判的每一个鬼"（黑盒问题8），点燃不是改判）
+  igniteCount: number
   finishSession: (hollowGained: number) => void
   // 文本屏推进：只走 index，不计案件数、不加空壳（finishedCases 保持"已归档案数"语义）
   advanceFlow: () => void
+  // 点燃屏专用推进：index+1 且 igniteCount+1（ScreenData.ignite=true 的屏用）
+  igniteFeed: () => void
 }
 
 // ——— localStorage 自动存档（任务5）———
-// 只存会话层 store 全量（index/totalHollow/finishedCases）；案内进度不存，
+// 只存会话层 store 全量（index/totalHollow/finishedCases/igniteCount）；案内进度不存，
 // 刷新后回到当前案开头（执行文档任务5规格口径）。
 const SAVE_KEY = 'm0_session_save'
-const SCHEMA_VERSION = 2 // v1→v2：案件序列扩为全幕 FLOW（案件+屏+Epilogue），v1 老档 index 语义错位，直接弃用
+const SCHEMA_VERSION = 3 // v2→v3：加 igniteCount（点燃喂归零轨），老档补默认 0，不弃档
+// v1→v2：案件序列扩为全幕 FLOW（案件+屏+Epilogue），v1 老档 index 语义错位，直接弃用
 
 interface SaveData {
   version: number
   index: number
   totalHollow: number
   finishedCases: number
+  igniteCount?: number
 }
 
 // 迁移链：存档结构升级时在此登记"版本 n → n+1"的转换函数，loadSave 自动逐级执行。
 // v1→v2 无合理迁移（流程表重排，旧进度不可映射），留空＝老档静默弃用。
-const MIGRATIONS: Record<number, (s: SaveData) => SaveData> = {}
+// v2→v3：igniteCount 缺省 0（M1 点燃机制上线，老档无此字段）
+const MIGRATIONS: Record<number, (s: SaveData) => SaveData> = {
+  2: (s) => ({ ...s, igniteCount: 0 }),
+}
 
 // 读档：无档/损坏/版本不识别一律按新档处理（静默弃用，不阻断游玩）。
 // localStorage 是外部边界，字段做类型与范围校验后才采信。
-function loadSave(): { index: number; totalHollow: number; finishedCases: number } | null {
+function loadSave(): { index: number; totalHollow: number; finishedCases: number; igniteCount: number } | null {
   try {
     if (typeof localStorage === 'undefined') return null
     const raw = localStorage.getItem(SAVE_KEY)
@@ -107,6 +118,7 @@ function loadSave(): { index: number; totalHollow: number; finishedCases: number
       v += 1
     }
     const { index, totalHollow, finishedCases } = data
+    const igniteCount = data.igniteCount ?? 0
     const ok =
       Number.isInteger(index) &&
       index >= 0 &&
@@ -115,7 +127,7 @@ function loadSave(): { index: number; totalHollow: number; finishedCases: number
       totalHollow >= 0 &&
       Number.isInteger(finishedCases) &&
       finishedCases >= 0
-    return ok ? { index, totalHollow, finishedCases } : null
+    return ok ? { index, totalHollow, finishedCases, igniteCount } : null
   } catch {
     return null
   }
@@ -127,6 +139,7 @@ export const useSessionStore = create<SessionStore>()((set) => ({
   index: saved?.index ?? 0,
   totalHollow: saved?.totalHollow ?? 0,
   finishedCases: saved?.finishedCases ?? 0,
+  igniteCount: saved?.igniteCount ?? 0,
   finishSession: (hollowGained) => {
     playSealCase()
     set((s) => ({
@@ -136,6 +149,7 @@ export const useSessionStore = create<SessionStore>()((set) => ({
     }))
   },
   advanceFlow: () => set((s) => ({ index: s.index + 1 })),
+  igniteFeed: () => set((s) => ({ index: s.index + 1, igniteCount: s.igniteCount + 1 })),
 }))
 
 // 状态一变即自动写档（写档失败静默跳过：隐私模式/配额满不影响游玩）
@@ -147,6 +161,7 @@ useSessionStore.subscribe((s) => {
       index: s.index,
       totalHollow: s.totalHollow,
       finishedCases: s.finishedCases,
+      igniteCount: s.igniteCount,
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(data))
   } catch {
