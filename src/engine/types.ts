@@ -38,6 +38,14 @@ export interface PressureEvents {
   listShift?: number // 冷处理名单挪动（Q8 定显影强度；骨架已由过场公告承载，此为数据标注位）
 }
 
+// ——— M2 燃料经济层扩展（燃料经济层设计_v0.1 §四）———
+// 引擎红线：rules.ts 不读 fuel 字段——性质转换是结案级 UI/store 层选择，不进判定链。
+// 不可降格条款 2 的执行：warmFuel 的每一笔都要能指出对应的周渡源温暖证据（阳间活人参与）。
+export interface FuelConfig {
+  warmEvidence: string[] // 温暖证据陈述 id（周渡源 greytrace——阳间思念抄录在案）；全部取证后性质转换归档才可用
+  conversionLine?: string // 性质转换结案语（结案结算屏燃料行文案）
+}
+
 export interface CaseData {
   id: string
   title: string
@@ -51,6 +59,7 @@ export interface CaseData {
   actionsPerDay: number
   ignition?: Ignition // M0 案无此字段；M1 起每案必有
   pressureEvents?: PressureEvents
+  fuel?: FuelConfig // M2 起燃料层案件（案 7 教学场）——引擎不读，结案级二选一走 UI 层
 }
 
 export type Ending = 'full' | 'downgraded'

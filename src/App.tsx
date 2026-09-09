@@ -77,16 +77,19 @@ function App() {
   const index = useSessionStore((s) => s.index)
   const finishedCases = useSessionStore((s) => s.finishedCases)
   const finishSession = useSessionStore((s) => s.finishSession)
+  const finishWarm = useSessionStore((s) => s.finishWarm)
   const advanceFlow = useSessionStore((s) => s.advanceFlow)
   const igniteFeed = useSessionStore((s) => s.igniteFeed)
   const totalHollow = useSessionStore((s) => s.totalHollow)
+  const igniteCount = useSessionStore((s) => s.igniteCount)
+  const warmFuel = useSessionStore((s) => s.warmFuel)
   const entries = useGameStore((s) => s.entries)
 
   // 会话层流转：当前槽位有数据但尚未装载时载入；无数据则显示"待续"占位
   const item = FLOW[index]
   const slot = item?.kind === 'case' ? item : undefined
   // 文本屏（结算/名单化）可读取的会话层数据汇总（现有 store 字段，不新增状态）
-  const stats: SessionStats = { totalHollow, finishedCases }
+  const stats: SessionStats = { totalHollow, finishedCases, igniteCount, warmFuel }
   useEffect(() => {
     if (slot?.data && slot.data.id !== caseData.id) {
       startCase(slot.data)
@@ -123,6 +126,11 @@ function App() {
   )
 
   const closed = state.phase === 'resolved'
+
+  // M2 燃料层（燃料经济层设计_v0.1 §三）：性质转换前置——本案 fuel 配置存在且全部温暖证据已取证。
+  // 没拿到温暖证据＝只有老动词（改判归档），UI 静默降级，不弹提示。
+  const fuel = caseData.fuel
+  const warmReady = fuel !== undefined && fuel.warmEvidence.every((id) => state.revealed.includes(id))
 
   // 取证成功后自动把新证据挂入对照台（纯 UI 便利：买来的线索默认就是要对照的对象）
   const revealAndSelect = (stmtId: string) => {
@@ -179,6 +187,7 @@ function App() {
   }
 
   if (closed) {
+    // M2 燃料层结案级二选一（设计 §三）：温暖证据齐→改判归档 vs 性质转换归档；不齐→单按钮老形态
     return (
       <div className="screen">
         <header className="topbar">
@@ -189,13 +198,31 @@ function App() {
           {/* 彩蛋位（切片文档二节）：序幕案卷编号与玩家档案同源，文案用户主笔 */}
           <div className="egg-slot" data-egg="prologue-dossier-link" />
           <p className="epilogue">{caseData.epilogue}</p>
-          <button
-            type="button"
-            className="btn primary"
-            onClick={() => finishSession(state.hollowCount)}
-          >
-            结案归档 · 继续
-          </button>
+          {fuel && warmReady ? (
+            <div className="fuel-choice">
+              <p className="fuel-line">{fuel.conversionLine}</p>
+              <div className="fuel-buttons">
+                <button
+                  type="button"
+                  className="btn ghost"
+                  onClick={() => finishSession(state.hollowCount)}
+                >
+                  改判归档 · 空壳 +{state.hollowCount}
+                </button>
+                <button type="button" className="btn primary" onClick={finishWarm}>
+                  性质转换归档 · 温暖执念 +1
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn primary"
+              onClick={() => finishSession(state.hollowCount)}
+            >
+              结案归档 · 继续
+            </button>
+          )}
           <GameLog entries={entries} />
         </main>
       </div>

@@ -51,7 +51,18 @@ export default function TextScreen({ data, stats, onDone }: Props) {
     <div className="screen">
       <main className="endpanel">
         {data.title && <span className="endtag">{data.title}</span>}
-        <p className="epilogue ts-lines">{lines.join('\n\n')}</p>
+        {data.stepwise ? (
+          // M2 摊牌逐行加载（设计 §五）：纸面行序浮现，每行一息——系统在"加载"你熟悉的鬼
+          <div className="ts-steps">
+            {lines.map((l, i) => (
+              <p key={`${i}-${l.slice(0, 8)}`} className="ts-step" style={{ animationDelay: `${400 + i * 700}ms` }}>
+                {l}
+              </p>
+            ))}
+          </div>
+        ) : (
+          <p className="epilogue ts-lines">{lines.join('\n\n')}</p>
+        )}
         {data.note && <p className="ts-note">{data.note}</p>}
         <button type="button" className="btn primary" onClick={advance}>
           {btn}

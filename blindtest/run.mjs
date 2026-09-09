@@ -25,7 +25,7 @@ if (!KEY) {
   process.exit(1)
 }
 
-const CASES = ['prologue', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6']
+const CASES = ['prologue', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9']
 const API = 'https://apihub.agnes-ai.com/v1/chat/completions'
 const MODEL = 'agnes-2.0-flash'
 

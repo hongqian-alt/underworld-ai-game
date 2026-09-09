@@ -393,6 +393,34 @@
   white-space: pre-wrap;
 }
 
+/* === M2 燃料经济层：结案级二选一（燃料经济层设计_v0.1 §三/§五） === */
+.fuel-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 560px;
+}
+
+.fuel-line {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+.fuel-buttons {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.fuel-buttons .btn {
+  margin-top: 6px;
+}
+
 /* 会话层：结案归档与"待续"占位 */
 .orderlist {
   list-style: none;
@@ -654,6 +682,23 @@
   color: var(--night-line);
   font-size: var(--fs-note);
   letter-spacing: 2px;
+}
+
+/* === M2 摊牌逐行加载（燃料经济层设计 §五/执行文档 T2.2）：纸面行序浮现 === */
+/* 表一行一行"长"出来——每行一息，系统在"加载"你熟悉的鬼（复用 epiFadeIn，与黑屏 epi-line 同节拍惯例） */
+.ts-steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ts-step {
+  max-width: 560px;
+  margin: 0 0 14px;
+  line-height: 2;
+  white-space: pre-wrap;
+  opacity: 0;
+  animation: epiFadeIn 1.4s forwards;
 }
 
 /* 符号墙底纹（阶段B结构版）：M1 科技点燃屏——黑底上极淡符文网格＋中心朱意微光 */
