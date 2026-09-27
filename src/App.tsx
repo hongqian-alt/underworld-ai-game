@@ -83,13 +83,16 @@ function App() {
   const totalHollow = useSessionStore((s) => s.totalHollow)
   const igniteCount = useSessionStore((s) => s.igniteCount)
   const warmFuel = useSessionStore((s) => s.warmFuel)
+  // F1·留副本（M1细纲 v0.1a）：案5 结案轻动作的叙事选择
+  const copyKept = useSessionStore((s) => s.copyKept)
+  const keepCopy = useSessionStore((s) => s.keepCopy)
   const entries = useGameStore((s) => s.entries)
 
   // 会话层流转：当前槽位有数据但尚未装载时载入；无数据则显示"待续"占位
   const item = FLOW[index]
   const slot = item?.kind === 'case' ? item : undefined
-  // 文本屏（结算/名单化）可读取的会话层数据汇总（现有 store 字段，不新增状态）
-  const stats: SessionStats = { totalHollow, finishedCases, igniteCount, warmFuel }
+  // 文本屏（结算/名单化）可读取的会话层数据汇总（会话层字段；copyKept＝F1 留副本分支）
+  const stats: SessionStats = { totalHollow, finishedCases, igniteCount, warmFuel, copyKept }
   useEffect(() => {
     if (slot?.data && slot.data.id !== caseData.id) {
       startCase(slot.data)
@@ -198,7 +201,32 @@ function App() {
           {/* 彩蛋位（切片文档二节）：序幕案卷编号与玩家档案同源，文案用户主笔 */}
           <div className="egg-slot" data-egg="prologue-dossier-link" />
           <p className="epilogue">{caseData.epilogue}</p>
-          {fuel && warmReady ? (
+          {caseData.id === 'm1_zouhun' ? (
+            // F1·留副本（M1细纲 v0.1a）：案5 结案可选轻动作——两键均推进，仅叙事分支（不进引擎、不入档）；
+            // 布局复用结案级二选一样式（fuel-choice 系类名）
+            <div className="fuel-choice">
+              <p className="fuel-line">（这份卷证，黄纸边上留一份副本？）</p>
+              <div className="fuel-buttons">
+                <button
+                  type="button"
+                  className="btn ghost"
+                  onClick={() => {
+                    keepCopy()
+                    finishSession(state.hollowCount)
+                  }}
+                >
+                  留一份副本
+                </button>
+                <button
+                  type="button"
+                  className="btn primary"
+                  onClick={() => finishSession(state.hollowCount)}
+                >
+                  收卷归档 · 继续
+                </button>
+              </div>
+            </div>
+          ) : fuel && warmReady ? (
             <div className="fuel-choice">
               <p className="fuel-line">{fuel.conversionLine}</p>
               <div className="fuel-buttons">

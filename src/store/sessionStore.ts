@@ -79,6 +79,9 @@ interface SessionStore {
   igniteCount: number
   // 温暖执念账本（M2 燃料经济层，设计 §二/§三）：性质转换结案 +1/案——每笔都可指出对应周渡源温暖证据
   warmFuel: number
+  // F1·留副本（M1细纲 v0.1a）：案5 结案可选轻动作的叙事选择——不入引擎、不入档（断档回默认，无感知）
+  copyKept: boolean
+  keepCopy: () => void
   finishSession: (hollowGained: number) => void
   // 性质转换归档（M2 新动词，结案级二选一）：空壳不入账（执念换性质、种子保住），温暖执念 +1
   finishWarm: () => void
@@ -164,6 +167,7 @@ export const useSessionStore = create<SessionStore>()((set) => ({
   finishedCases: saved?.finishedCases ?? 0,
   igniteCount: saved?.igniteCount ?? 0,
   warmFuel: saved?.warmFuel ?? 0,
+  copyKept: false, // 不入档：始终从默认 false 起（断档回退默认文案，无感知）
   finishSession: (hollowGained) => {
     playSealCase()
     set((s) => ({
@@ -182,6 +186,8 @@ export const useSessionStore = create<SessionStore>()((set) => ({
       warmFuel: s.warmFuel + 1,
     }))
   },
+  // F1·留副本：纯叙事标记——只切换 after_zouhun 的回报文案分支，不参与任何结算
+  keepCopy: () => set({ copyKept: true }),
   advanceFlow: () => set((s) => ({ index: s.index + 1 })),
   igniteFeed: () => set((s) => ({ index: s.index + 1, igniteCount: s.igniteCount + 1 })),
 }))
